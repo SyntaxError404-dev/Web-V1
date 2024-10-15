@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeTa-AI Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #141414;
+            color: #e0e0e0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #chat-container {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #222;
+            border-radius: 15px;
+            box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            border: none;
+            padding: 10px;
+            border-radius: 30px;
+            outline: none;
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        #send-button {
+            background-color: #6a11cb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #send-button:hover {
+            background-color: #2575fc;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message-bot {
+            justify-content: flex-start;
+        }
+
+        .message-user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 60%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .message-bot .message-bubble {
+            background-color: rgba(37, 117, 252, 0.3);
+            color: white;
+        }
+
+        .message-user .message-bubble {
+            background-color: rgba(68, 68, 68, 0.3);
+            color: #fff;
+        }
+
+        .floating-neon {
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, #2575fc, #6a11cb, #ff7e5f, #feb47b);
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 6s infinite alternate;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #141414, #202020, #252525, #141414);
+            background-size: 400% 400%;
+            animation: backgroundMove 15s ease infinite;
+        }
+
+        @keyframes backgroundMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MeTa-AI</h1>
+            <i class="fas fa-robot fa-2x text-blue-400"></i>
+        </div>
+
+        <div id="chat-container"></div>
+
+        <div class="flex">
+            <input type="text" id="user-input" placeholder="Type your message..." class="w-full text-white" />
+            <button id="send-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div class="floating-neon"></div>
+    <div class="background-animation"></div>
+
+    <script>
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function appendMessage(content, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', `message-${sender}`);
+
+            const bubbleElement = document.createElement('div');
+            bubbleElement.classList.add('message-bubble');
+            bubbleElement.textContent = content;
+
+            messageElement.appendChild(bubbleElement);
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return; 
+
+            appendMessage(message, 'user'); 
+            userInput.value = '';
+
+            console.log('Sending message to API:', message); 
+
+            fetch(`https://286e9709-aab5-4f41-a3fb-c62953c6e81f-00-2zuikgs4ldmxa.worf.replit.dev/ques?t=${encodeURIComponent(message)}`)
+                .then(response => {
+                    console.log('API response status:', response.status); 
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('API response data:', data); 
+                    appendMessage(data, 'bot'); 
+                })
+                .catch(error => {
+                    appendMessage('Error: Unable to reach the bot.', 'bot'); 
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+                                   </html>
