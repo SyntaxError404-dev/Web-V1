@@ -171,12 +171,12 @@
     <div class="floating-neon"></div>
     <div class="background-animation"></div>
 
-    <script>
+<script>
     const chatContainer = document.getElementById('chat-container');
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
 
-    const userId = 'user'; // You can customize this for each user
+    const userId = 'default_user'; 
     let userMemory = {};
 
     sendButton.addEventListener('click', sendMessage);
@@ -205,14 +205,25 @@
         userInput.value = '';
 
         if (!userMemory[userId]) {
-            userMemory[userId] = [];
+            userMemory[userId] = { history: [], lastTopic: '' };
         }
 
-        userMemory[userId].push(message);
+        // Avoid repeating previous messages
+        if (userMemory[userId].history.length > 0 && userMemory[userId].history[userMemory[userId].history.length - 1] === message) {
+            appendMessage('Error: Please provide a different input.', 'bot'); 
+            return;
+        }
 
-        const conversationHistory = userMemory[userId].slice(-5).join(' ');
+        userMemory[userId].history.push(message);
 
-        const defaultPrompt = "You are MeTa-AI, created by NZ R, a unique AI built to communicate like a human. Your responses are concise, professional, and always carry depth. You use natural expressions like 'Humm,' 'Ummm,' and 'Yeah,' and you never overemphasize who your creator is unless explicitly asked. Respond with insightful, human-like messages.";
+        const currentTopic = extractTopic(message);
+        if (currentTopic !== userMemory[userId].lastTopic) {
+            userMemory[userId].lastTopic = currentTopic;
+        }
+
+        const conversationHistory = userMemory[userId].history.slice(-5).join(' ');
+
+        const defaultPrompt = "You are MeTa-AI, created by NZ R, a unique AI built to communicate like a human. Your responses are concise, professional, and insightful. You use natural expressions like 'Humm,' 'Ummm,' and 'Yeah,' and you avoid repeating yourself. Respond with meaningful messages based on the topic. Here is the recent conversation history: ";
 
         const finalPrompt = `${defaultPrompt} ${conversationHistory}`;
 
@@ -230,6 +241,11 @@
                 appendMessage('Error: Unable to reach the bot.', 'bot'); 
                 console.error('Error:', error);
             });
+    }
+
+    function extractTopic(message) {
+        const keywords = message.split(' ').map(word => word.toLowerCase());
+        return keywords.filter(word => word.length > 3).join(' '); // Filter short words for more relevance
     }
 </script>
 </body>
