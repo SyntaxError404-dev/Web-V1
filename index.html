@@ -142,14 +142,14 @@
             height: 100%;
             z-index: -1;
             background: linear-gradient(45deg, #141414, #202020, #252525, #141414);
-            background-size: 400% 400%;
-            animation: backgroundMove 15s ease infinite;
+            background-size: 440% 440%;
+            animation: backgroundMove 5s ease infinite;
         }
 
         @keyframes backgroundMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            10% { background-position: 0% 50%; }
+            50% { background-position: 100% 70%; }
+            100% { background-position: 10% 50%; }
         }
     </style>
 </head>
@@ -175,9 +175,7 @@
     const chatContainer = document.getElementById('chat-container');
     const userInput = document.getElementById('user-input');
     const sendButton = document.getElementById('send-button');
-
-    const userId = 'default_user'; 
-    let userMemory = {};
+    let conversationHistory = [];
 
     sendButton.addEventListener('click', sendMessage);
     userInput.addEventListener('keypress', function (e) {
@@ -197,56 +195,42 @@
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
+    function createPrompt(message) {
+        conversationHistory.push(message);
+
+        const history = conversationHistory.slice(-5).join(' ');
+        const defaultPrompt = "You're MeTa-AI, created by NZ R. You're not GPT or Gemini, you're unique and human-like in communication. You respond with concise, thoughtful, and professional messages. Your tone is smooth, adaptive, and you naturally understand shifts in conversation. You don't repeat topics unnecessarily, and you react naturally with expressions like 'Humm,' 'Ummm,' 'Yeah,' and emojis. Respond based on the conversation context without overemphasizing your creator unless asked.";
+
+        const prompt = `${defaultPrompt} Here is the recent conversation: ${history}`;
+        return prompt;
+    }
+
     function sendMessage() {
         const message = userInput.value.trim();
-        if (message === '') return; 
+        if (message === '') return;
 
-        appendMessage(message, 'user'); 
+        appendMessage(message, 'user');
         userInput.value = '';
 
-        if (!userMemory[userId]) {
-            userMemory[userId] = { history: [], lastTopic: '' };
-        }
+        const prompt = createPrompt(message);
 
-        // Avoid repeating previous messages
-        if (userMemory[userId].history.length > 0 && userMemory[userId].history[userMemory[userId].history.length - 1] === message) {
-            appendMessage('Error: Please provide a different input.', 'bot'); 
-            return;
-        }
+        console.log('Sending message to API:', prompt);
 
-        userMemory[userId].history.push(message);
-
-        const currentTopic = extractTopic(message);
-        if (currentTopic !== userMemory[userId].lastTopic) {
-            userMemory[userId].lastTopic = currentTopic;
-        }
-
-        const conversationHistory = userMemory[userId].history.slice(-5).join(' ');
-
-        const defaultPrompt = "You are MeTa-AI, created by NZ R, a unique AI built to communicate like a human. Your responses are concise, professional, and insightful. You use natural expressions like 'Humm,' 'Ummm,' and 'Yeah,' and you avoid repeating yourself. Respond with meaningful messages based on the topic. Here is the recent conversation history: ";
-
-        const finalPrompt = `${defaultPrompt} ${conversationHistory}`;
-
-        fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(finalPrompt)}`)
+        fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(prompt)}`)
             .then(response => {
+                console.log('API response status:', response.status);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.json(); 
+                return response.json();
             })
             .then(data => {
-                appendMessage(data, 'bot'); 
+                console.log('API response data:', data);
+                appendMessage(data, 'bot');
             })
             .catch(error => {
-                appendMessage('Error: Unable to reach the bot.', 'bot'); 
+                appendMessage('Error: Unable to reach the bot.', 'bot');
                 console.error('Error:', error);
             });
     }
-
-    function extractTopic(message) {
-        const keywords = message.split(' ').map(word => word.toLowerCase());
-        return keywords.filter(word => word.length > 3).join(' '); // Filter short words for more relevance
-    }
 </script>
-</body>
-</html>
