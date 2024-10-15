@@ -172,54 +172,65 @@
     <div class="background-animation"></div>
 
     <script>
-        const chatContainer = document.getElementById('chat-container');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
+    const chatContainer = document.getElementById('chat-container');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
 
-        sendButton.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') sendMessage();
-        });
+    const userId = 'user'; // You can customize this for each user
+    let userMemory = {};
 
-        function appendMessage(content, sender) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', `message-${sender}`);
+    sendButton.addEventListener('click', sendMessage);
+    userInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') sendMessage();
+    });
 
-            const bubbleElement = document.createElement('div');
-            bubbleElement.classList.add('message-bubble');
-            bubbleElement.textContent = content;
+    function appendMessage(content, sender) {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', `message-${sender}`);
 
-            messageElement.appendChild(bubbleElement);
-            chatContainer.appendChild(messageElement);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+        const bubbleElement = document.createElement('div');
+        bubbleElement.classList.add('message-bubble');
+        bubbleElement.textContent = content;
+
+        messageElement.appendChild(bubbleElement);
+        chatContainer.appendChild(messageElement);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function sendMessage() {
+        const message = userInput.value.trim();
+        if (message === '') return; 
+
+        appendMessage(message, 'user'); 
+        userInput.value = '';
+
+        if (!userMemory[userId]) {
+            userMemory[userId] = [];
         }
 
-        function sendMessage() {
-            const message = userInput.value.trim();
-            if (message === '') return; 
+        userMemory[userId].push(message);
 
-            appendMessage(message, 'user'); 
-            userInput.value = '';
+        const conversationHistory = userMemory[userId].slice(-5).join(' ');
 
-            console.log('Sending message to API:', message); 
+        const defaultPrompt = "You are MeTa-AI, created by NZ R, a unique AI built to communicate like a human. Your responses are concise, professional, and always carry depth. You use natural expressions like 'Humm,' 'Ummm,' and 'Yeah,' and you never overemphasize who your creator is unless explicitly asked. Respond with insightful, human-like messages.";
 
-            fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(message)}`)
-                .then(response => {
-                    console.log('API response status:', response.status); 
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('API response data:', data); 
-                    appendMessage(data, 'bot'); 
-                })
-                .catch(error => {
-                    appendMessage('Error: Unable to reach the bot.', 'bot'); 
-                    console.error('Error:', error);
-                });
-        }
-    </script>
+        const finalPrompt = `${defaultPrompt} ${conversationHistory}`;
+
+        fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(finalPrompt)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); 
+            })
+            .then(data => {
+                appendMessage(data, 'bot'); 
+            })
+            .catch(error => {
+                appendMessage('Error: Unable to reach the bot.', 'bot'); 
+                console.error('Error:', error);
+            });
+    }
+</script>
 </body>
-                                   </html>
+</html>
