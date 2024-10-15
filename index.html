@@ -203,7 +203,7 @@
 
             console.log('Sending message to API:', message); 
 
-            fetch(`https://286e9709-aab5-4f41-a3fb-c62953c6e81f-00-2zuikgs4ldmxa.worf.replit.dev/ques?t=${encodeURIComponent(message)}`)
+            fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(message)}`)
                 .then(response => {
                     console.log('API response status:', response.status); 
                     if (!response.ok) {
