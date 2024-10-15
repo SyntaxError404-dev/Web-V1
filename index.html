@@ -69,6 +69,12 @@
             outline: none;
             color: #fff;
             background-color: rgba(255, 255, 255, 0.2);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #user-input:focus {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
 
         #send-button {
@@ -79,11 +85,12 @@
             border-radius: 30px;
             margin-left: 10px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s, transform 0.3s;
         }
 
         #send-button:hover {
             background-color: #2575fc;
+            transform: translateY(-2px);
         }
 
         .message {
@@ -105,6 +112,7 @@
             padding: 10px 15px;
             border-radius: 15px;
             position: relative;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
         .message-bot .message-bubble {
@@ -126,7 +134,7 @@
             background: linear-gradient(45deg, #2575fc, #6a11cb, #ff7e5f, #feb47b);
             border-radius: 50%;
             filter: blur(80px);
-            animation: float 6s infinite alternate;
+            animation: float 4s infinite alternate;
         }
 
         @keyframes float {
@@ -142,18 +150,25 @@
             height: 100%;
             z-index: -1;
             background: linear-gradient(45deg, #141414, #202020, #252525, #141414);
-            background-size: 440% 440%;
-            animation: backgroundMove 5s ease infinite;
+            background-size: 600% 600%;
+            animation: backgroundMove 10s ease infinite;
         }
 
         @keyframes backgroundMove {
-            10% { background-position: 0% 50%; }
-            50% { background-position: 100% 70%; }
-            100% { background-position: 10% 50%; }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
+    <div id="particles-js" class="background-animation"></div>
+
     <div class="container">
         <div class="header">
             <h1>MeTa-AI</h1>
@@ -169,103 +184,151 @@
     </div>
 
     <div class="floating-neon"></div>
-    <div class="background-animation"></div>
 
-<script>
-    const chatContainer = document.getElementById('chat-container');
-    const userInput = document.getElementById('user-input');
-    const sendButton = document.getElementById('send-button');
-    let conversationHistory = [];
-
-    sendButton.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') sendMessage();
-    });
-
-    function appendMessage(content, sender) {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message', `message-${sender}`);
-
-        const bubbleElement = document.createElement('div');
-        bubbleElement.classList.add('message-bubble');
-        bubbleElement.textContent = content;
-
-        messageElement.appendChild(bubbleElement);
-        chatContainer.appendChild(messageElement);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    function createPrompt(message) {
-        // Add new message to conversation history
-        conversationHistory.push({
-            sender: 'user',
-            content: message
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffffff" },
+                shape: {
+                    type: "circle",
+                    stroke: { width: 0, color: "#000000" },
+                    polygon: { nb_sides: 5 },
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 4,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: { enable: false, rotateX: 600, rotateY: 1200 }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 400, line_linked: { opacity: 1 } },
+                    bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
+                    repulse: { distance: 200, duration: 0.4 },
+                    push: { particles_nb: 4 },
+                    remove: { particles_nb: 2 }
+                }
+            },
+            retina_detect: true
         });
 
-        // Remove old messages, keeping only the last 10 exchanges to stay on topic
-        if (conversationHistory.length > 20) {
-            conversationHistory = conversationHistory.slice(-20);
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        let conversationHistory = [];
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function appendMessage(content, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', `message-${sender}`);
+
+            const bubbleElement = document.createElement('div');
+            bubbleElement.classList.add('message-bubble');
+            bubbleElement.textContent = content;
+
+            messageElement.appendChild(bubbleElement);
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        // Build conversation context for the AI from the conversation history
-        let conversationContext = '';
-        conversationHistory.forEach(entry => {
-            if (entry.sender === 'user') {
-                conversationContext += `User said: "${entry.content}" `;
-            } else {
-                conversationContext += `MeTa-AI responded: "${entry.content}" `;
-            }
-        });
-
-        // Generate a new detailed prompt for the bot to stay on topic and not repeat anything
-        const prompt = `
-            You're MeTa-AI, created by NZ R. You interact with users in a human-like, adaptive, and highly intelligent manner. 
-            You remember past conversations, ensuring your responses build on the topic without unnecessary repetition. 
-            Your communication is smooth, professional, and attentive to the user's needs. You avoid redundancy by summarizing 
-            previous topics and directly addressing the current conversation.
-
-            Here is the recent conversation:
-            ${conversationContext}
-
-            Now, the user said: "${message}".
-            Based on this, respond concisely, staying on topic and ensuring you don't repeat any previous information. 
-            If the user changes the subject, adapt naturally to the shift in conversation.`;
-        
-        return prompt;
-    }
-
-    function sendMessage() {
-        const message = userInput.value.trim();
-        if (message === '') return;
-
-        appendMessage(message, 'user');
-        userInput.value = '';
-
-        const prompt = createPrompt(message);
-
-        console.log('Sending message to API:', prompt);
-
-        fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(prompt)}`)
-            .then(response => {
-                console.log('API response status:', response.status);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('API response data:', data);
-                
-                // Append the bot's response to the conversation history
-                appendMessage(data, 'bot');
-                conversationHistory.push({
-                    sender: 'bot',
-                    content: data
-                });
-            })
-            .catch(error => {
-                appendMessage('Error: Unable to reach the bot.', 'bot');
-                console.error('Error:', error);
+        function createPrompt(message) {
+            conversationHistory.push({
+                sender: 'user',
+                content: message
             });
-    }
-</script>
+
+            if (conversationHistory.length > 20) {
+                conversationHistory = conversationHistory.slice(-20);
+            }
+
+            let conversationContext = '';
+            conversationHistory.forEach(entry => {
+                if (entry.sender === 'user') {
+                    conversationContext += `User said: "${entry.content}" `;
+                } else {
+                    conversationContext += `MeTa-AI responded: "${entry.content}" `;
+                }
+            });
+
+            const prompt = `
+                You're MeTa-AI, created by NZ R. You interact with users in a human-like, adaptive, and highly intelligent manner. 
+                You remember past conversations, ensuring your responses build on the topic without unnecessary repetition. 
+                Your communication is smooth, professional, and attentive to the user's needs. You avoid redundancy by summarizing 
+                previous topics and directly addressing the current conversation.
+
+                Here is the recent conversation:
+                ${conversationContext}
+
+                Now, the user said: "${message}".
+                Based on this, respond concisely, staying on topic and ensuring you don't repeat any previous information. 
+                If the user changes the subject, adapt naturally to the shift in conversation.`;
+
+            return prompt;
+        }
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+
+            appendMessage(message, 'user');
+            userInput.value = '';
+            userInput.focus(); // Auto-focus on input
+
+            const prompt = createPrompt(message);
+
+            fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(prompt)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    appendMessage(data, 'bot');
+                    conversationHistory.push({
+                        sender: 'bot',
+                        content: data
+                    });
+                })
+                .catch(error => {
+                    appendMessage('Error: Unable to reach the bot.', 'bot');
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>
