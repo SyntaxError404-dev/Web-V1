@@ -196,12 +196,41 @@
     }
 
     function createPrompt(message) {
-        conversationHistory.push(message);
+        // Add new message to conversation history
+        conversationHistory.push({
+            sender: 'user',
+            content: message
+        });
 
-        const history = conversationHistory.slice(-5).join(' ');
-        const defaultPrompt = "You're MeTa-AI, created by NZ R. You're not GPT or Gemini, you're unique and human-like in communication. You respond with concise, thoughtful, and professional messages. Your tone is smooth, adaptive, and you naturally understand shifts in conversation. You don't repeat topics unnecessarily, and you react naturally with expressions like 'Humm,' 'Ummm,' 'Yeah,' and emojis. Respond based on the conversation context without overemphasizing your creator unless asked.";
+        // Remove old messages, keeping only the last 10 exchanges to stay on topic
+        if (conversationHistory.length > 20) {
+            conversationHistory = conversationHistory.slice(-20);
+        }
 
-        const prompt = `${defaultPrompt} Here is the recent conversation: ${history}`;
+        // Build conversation context for the AI from the conversation history
+        let conversationContext = '';
+        conversationHistory.forEach(entry => {
+            if (entry.sender === 'user') {
+                conversationContext += `User said: "${entry.content}" `;
+            } else {
+                conversationContext += `MeTa-AI responded: "${entry.content}" `;
+            }
+        });
+
+        // Generate a new detailed prompt for the bot to stay on topic and not repeat anything
+        const prompt = `
+            You're MeTa-AI, created by NZ R. You interact with users in a human-like, adaptive, and highly intelligent manner. 
+            You remember past conversations, ensuring your responses build on the topic without unnecessary repetition. 
+            Your communication is smooth, professional, and attentive to the user's needs. You avoid redundancy by summarizing 
+            previous topics and directly addressing the current conversation.
+
+            Here is the recent conversation:
+            ${conversationContext}
+
+            Now, the user said: "${message}".
+            Based on this, respond concisely, staying on topic and ensuring you don't repeat any previous information. 
+            If the user changes the subject, adapt naturally to the shift in conversation.`;
+        
         return prompt;
     }
 
@@ -226,7 +255,13 @@
             })
             .then(data => {
                 console.log('API response data:', data);
+                
+                // Append the bot's response to the conversation history
                 appendMessage(data, 'bot');
+                conversationHistory.push({
+                    sender: 'bot',
+                    content: data
+                });
             })
             .catch(error => {
                 appendMessage('Error: Unable to reach the bot.', 'bot');
