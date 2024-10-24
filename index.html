@@ -185,6 +185,13 @@
         const sendButton = document.getElementById('send-button');
         let conversationHistory = [];
 
+        const constantPrompt = `
+            You are MeTa-AI, an advanced assistant created by NZ R. 
+            You possess the ability to understand and remember past interactions, ensuring responses are relevant and personalized.
+            You adapt naturally to changes in conversation topics and provide insightful, concise, yet thorough answers.
+            Remember the user's past preferences and style of communication to personalize your responses.
+        `;
+
         function appendMessage(content, sender) {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', `message-${sender}`);
@@ -206,11 +213,8 @@
             }).join(' ');
 
             const prompt = `
-                You are MeTa-AI, an advanced assistant created by NZ R. 
-                You possess the ability to understand and remember past interactions, ensuring responses are relevant and personalized.
-                You can adapt naturally to changes in conversation topics and provide insightful, concise, yet thorough answers.
-                Remember the user's past preferences and style of communication to personalize your responses.
-
+                ${constantPrompt}
+                
                 Recent conversation:
                 ${conversationContext}
 
