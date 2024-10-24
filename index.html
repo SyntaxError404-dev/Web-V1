@@ -301,34 +301,35 @@
         }
 
         function sendMessage() {
-            const message = userInput.value.trim();
-            if (message === '') return;
+    const message = userInput.value.trim();
+    if (message === '') return;
 
-            appendMessage(message, 'user');
-            userInput.value = '';
-            userInput.focus(); // Auto-focus on input
+    appendMessage(message, 'user');
+    userInput.value = '';
+    userInput.focus();
 
-            const prompt = createPrompt(message);
+    const prompt = createPrompt(message);
 
-            fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(prompt)}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    appendMessage(data, 'bot');
-                    conversationHistory.push({
-                        sender: 'bot',
-                        content: data
-                    });
-                })
-                .catch(error => {
-                    appendMessage('Error: Unable to reach the bot.', 'bot');
-                    console.error('Error:', error);
-                });
-        }
-    </script>
+    fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(prompt)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(data => {
+            appendMessage(data, 'bot');
+            conversationHistory.push({
+                sender: 'bot',
+                content: data
+            });
+        })
+        .catch(error => {
+            appendMessage('Error: Unable to reach the bot.', 'bot');
+            console.error('Error:', error);
+        });
+}
+
+</script>
 </body>
 </html>
