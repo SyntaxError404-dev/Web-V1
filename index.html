@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #141414;
@@ -22,7 +21,6 @@
             height: 100vh;
             overflow: hidden;
         }
-
         .container {
             max-width: 800px;
             width: 100%;
@@ -34,14 +32,12 @@
             position: relative;
             overflow: hidden;
         }
-
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 20px;
         }
-
         .header h1 {
             font-size: 2.5rem;
             font-weight: 600;
@@ -50,7 +46,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         #chat-container {
             height: 400px;
             overflow-y: auto;
@@ -60,7 +55,6 @@
             box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
             margin-bottom: 20px;
         }
-
         #user-input {
             flex-grow: 1;
             border: none;
@@ -71,12 +65,10 @@
             background-color: rgba(255, 255, 255, 0.2);
             transition: background-color 0.3s, transform 0.3s;
         }
-
         #user-input:focus {
             background-color: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
         }
-
         #send-button {
             background-color: #6a11cb;
             color: white;
@@ -87,26 +79,21 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
         }
-
         #send-button:hover {
             background-color: #2575fc;
             transform: translateY(-2px);
         }
-
         .message {
             margin-bottom: 15px;
             display: flex;
             align-items: flex-start;
         }
-
         .message-bot {
             justify-content: flex-start;
         }
-
         .message-user {
             justify-content: flex-end;
         }
-
         .message-bubble {
             max-width: 60%;
             padding: 10px 15px;
@@ -114,17 +101,14 @@
             position: relative;
             animation: fadeIn 0.5s ease-in-out;
         }
-
         .message-bot .message-bubble {
             background-color: rgba(37, 117, 252, 0.3);
             color: white;
         }
-
         .message-user .message-bubble {
             background-color: rgba(68, 68, 68, 0.3);
             color: #fff;
         }
-
         .floating-neon {
             position: absolute;
             top: -50px;
@@ -136,12 +120,10 @@
             filter: blur(80px);
             animation: float 4s infinite alternate;
         }
-
         @keyframes float {
             0% { transform: translateY(0); }
             100% { transform: translateY(-20px); }
         }
-
         .background-animation {
             position: absolute;
             top: 0;
@@ -153,13 +135,11 @@
             background-size: 600% 600%;
             animation: backgroundMove 10s ease infinite;
         }
-
         @keyframes backgroundMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -168,151 +148,107 @@
 </head>
 <body>
     <div id="particles-js" class="background-animation"></div>
-
     <div class="container">
         <div class="header">
             <h1>MeTa-AI</h1>
             <i class="fas fa-robot fa-2x text-blue-400"></i>
         </div>
-
         <div id="chat-container"></div>
-
         <div class="flex">
             <input type="text" id="user-input" placeholder="Type your message..." class="w-full text-white" />
             <button id="send-button"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
-
     <div class="floating-neon"></div>
-
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
         particlesJS('particles-js', {
             particles: {
                 number: { value: 80, density: { enable: true, value_area: 800 } },
                 color: { value: "#ffffff" },
-                shape: {
-                    type: "circle",
-                    stroke: { width: 0, color: "#000000" },
-                    polygon: { nb_sides: 5 },
-                },
-                opacity: {
-                    value: 0.5,
-                    random: false,
-                    anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
-                },
-                size: {
-                    value: 3,
-                    random: true,
-                    anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
-                },
-                line_linked: {
-                    enable: true,
-                    distance: 150,
-                    color: "#ffffff",
-                    opacity: 0.4,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 4,
-                    direction: "none",
-                    random: false,
-                    straight: false,
-                    out_mode: "out",
-                    bounce: false,
-                    attract: { enable: false, rotateX: 600, rotateY: 1200 }
-                }
+                shape: { type: "circle", stroke: { width: 0, color: "#000000" }, polygon: { nb_sides: 5 } },
+                opacity: { value: 0.5, random: false, anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false } },
+                size: { value: 3, random: true, anim: { enable: false, speed: 40, size_min: 0.1, sync: false } },
+                line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 4, direction: "none", random: false, straight: false, out_mode: "out", bounce: false, attract: { enable: false, rotateX: 600, rotateY: 1200 } }
             },
             interactivity: {
                 detect_on: "canvas",
-                events: {
-                    onhover: { enable: true, mode: "repulse" },
-                    onclick: { enable: true, mode: "push" },
-                    resize: true
-                },
-                modes: {
-                    grab: { distance: 400, line_linked: { opacity: 1 } },
-                    bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
-                    repulse: { distance: 200, duration: 0.4 },
-                    push: { particles_nb: 4 },
-                    remove: { particles_nb: 2 }
-                }
+                events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+                modes: { grab: { distance: 400, line_linked: { opacity: 1 } }, bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 }, remove: { particles_nb: 2 } }
             },
             retina_detect: true
         });
 
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        let conversationHistory = [];
+
         function appendMessage(content, sender) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message', `message-${sender}`);
-
-    const bubbleElement = document.createElement('div');
-    bubbleElement.classList.add('message-bubble');
-    bubbleElement.textContent = content;
-
-    messageElement.appendChild(bubbleElement);
-    chatContainer.appendChild(messageElement);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-function createPrompt(message) {
-    // Implement more advanced memory management logic
-    const recentHistoryLimit = 50; // Increase the conversation history limit
-    if (conversationHistory.length > recentHistoryLimit) {
-        conversationHistory = conversationHistory.slice(-recentHistoryLimit);
-    }
-
-    // Create a more sophisticated context builder
-    let conversationContext = conversationHistory.map(entry => {
-        return `${entry.sender === 'user' ? 'User' : 'MeTa-AI'} said: "${entry.content}"`;
-    }).join(' ');
-
-    // Dynamic and contextual prompt creation
-    const prompt = `
-        You are MeTa-AI, an advanced assistant created by NZ R. 
-        You possess the ability to understand and remember past interactions, ensuring responses are relevant and personalized.
-        You can adapt naturally to changes in conversation topics and provide insightful, concise, yet thorough answers.
-        Remember the user's past preferences and style of communication to personalize your responses.
-
-        Recent conversation:
-        ${conversationContext}
-
-        The user said: "${message}".
-        Respond by considering the context and previous interactions. Stay concise and adapt if the topic shifts.`;
-
-    return prompt;
-}
-
-function sendMessage() {
-    const message = userInput.value.trim();
-    if (message === '') return;
-
-    appendMessage(message, 'user');
-    userInput.value = '';
-    userInput.focus();
-
-    const prompt = createPrompt(message);
-
-    fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(prompt)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(data => {
-            appendMessage(data, 'bot');
-            conversationHistory.push({
-                sender: 'bot',
-                content: data
-            });
-        })
-        .catch(error => {
-            appendMessage('Error: Unable to reach the bot.', 'bot');
-            console.error('Error:', error);
-        });
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', `message-${sender}`);
+            const bubbleElement = document.createElement('div');
+            bubbleElement.classList.add('message-bubble');
+            bubbleElement.textContent = content;
+            messageElement.appendChild(bubbleElement);
+            chatContainer.appendChild(messageElement);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-</script>
+        function createPrompt(message) {
+            const recentHistoryLimit = 50;
+            if (conversationHistory.length > recentHistoryLimit) {
+                conversationHistory = conversationHistory.slice(-recentHistoryLimit);
+            }
+            let conversationContext = conversationHistory.map(entry => {
+                return `${entry.sender === 'user' ? 'User' : 'MeTa-AI'} said: "${entry.content}"`;
+            }).join(' ');
+
+            const prompt = `
+                You are MeTa-AI, an advanced assistant created by NZ R. 
+                You possess the ability to understand and remember past interactions, ensuring responses are relevant and personalized.
+                You can adapt naturally to changes in conversation topics and provide insightful, concise, yet thorough answers.
+                Remember the user's past preferences and style of communication to personalize your responses.
+
+                Recent conversation:
+                ${conversationContext}
+
+                The user said: "${message}".
+                Respond by considering the context and previous interactions. Stay concise and adapt if the topic shifts.`;
+            return prompt;
+        }
+
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+            appendMessage(message, 'user');
+            userInput.value = '';
+            userInput.focus();
+            const prompt = createPrompt(message);
+            fetch(`https://server-by-nzr.onrender.com/ques?t=${encodeURIComponent(prompt)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    appendMessage(data, 'bot');
+                    conversationHistory.push({ sender: 'bot', content: data });
+                })
+                .catch(error => {
+                    appendMessage('Error: Unable to reach the bot.', 'bot');
+                    console.error('Error:', error);
+                });
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', event => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
 </body>
 </html>
